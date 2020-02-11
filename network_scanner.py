@@ -1,8 +1,19 @@
 import scapy.all as scapy
+import argparse
+
+
+def get_arguments():
+    '''Allow to run script with options as -t or --target
+       python network_scaner.py --target 10.0.0.0/16 or 
+       python network_scaner.py -t 10.0.0.0/16'''
+    parser = argparse.ArgumentParser()
+    parser.add_argument("-t", "--target", dest="target", help="Target IP/IP Range")
+    options = parser.parse_args()
+    return options
 
 
 def scan(ip):
-    # Creating an ARP request to ask who has the specific IP we asked for
+    # Creating an ARP request to ask who has the specific IP on a local ethernet network
     arp_request = scapy.ARP(pdst=ip)
     # arp_request.show()
 
@@ -32,6 +43,6 @@ def print_result(result_list):
     for client in result_list:
         print(client["ip"] + "\t\t" + client["mac"])
 
-
-scan_result = scan("10.0.2.1/24")
+options = get_arguments()
+scan_result = scan(options.target)
 print_result(scan_result)
